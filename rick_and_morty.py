@@ -5,9 +5,10 @@ from prefect import flow, task
 @flow(log_prints=True)
 def get_all_rick_and_morty_characters() -> None:
     dataframes = []
-
+    url = 'https://rickandmortyapi.com/api/character'
+    
     #paging thru the api endpoint and then combining all json payloads into one tabular dataframe
-    response = httpx.get('https://rickandmortyapi.com/api/character')
+    response = httpx.get(url)
     data = response.json()
     
     while url:
