@@ -2,7 +2,7 @@ import httpx
 from prefect import flow, task
 
 
-@task
+@task(log_prints=True)
 def fetch_weather(lat: float, lon: float):
     base_url = "https://api.open-meteo.com/v1/forecast/"
     temps = httpx.get(
@@ -14,14 +14,14 @@ def fetch_weather(lat: float, lon: float):
     return forecasted_temp
 
 
-@task
+@task(log_prints=True)
 def save_weather(temp: float):
     with open("weather.csv", "w+") as w:
         w.write(str(temp))
     return "Successfully wrote temp"
 
 
-@flow
+@flow(log_prints=True)
 def pipeline(lat: float = 38.9, lon: float = -77.0):
     temp = fetch_weather(lat, lon)
     result = save_weather(temp)
