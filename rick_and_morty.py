@@ -7,8 +7,7 @@ def get_all_rick_and_morty_characters():
     #Get All Rick and Morty Characters from the Rick and Morty Character API
     dataframes = []
     url = 'https://rickandmortyapi.com/api/character'
-    
-    #paging thru the api endpoint and then combining all json payloads into one tabular dataframe
+
     response = httpx.get(url)
     data = response.json()
     
@@ -25,9 +24,9 @@ def get_all_rick_and_morty_characters():
 
 
 @task()
-def count_by_species(df):
-    #Count the number of characters by species
-    result = df.groupby('species').size()
+def count_by_status(df):
+    #Count the number of characters by status
+    result = df.groupby('status').size()
     return result
 
 @task(log_prints=True)
@@ -38,5 +37,5 @@ def log_results(df):
 @flow()
 def run_rick_and_morty():
     characters = get_all_rick_and_morty_characters()
-    result = count_by_species(characters)
+    result = count_by_status(characters)
     log_results(result)
