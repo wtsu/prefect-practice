@@ -2,8 +2,9 @@ import httpx
 import pandas as pd
 from prefect import flow, task
 
-@flow(log_prints=True)
-def get_all_rick_and_morty_characters() -> None:
+@task()
+def get_all_rick_and_morty_characters():
+    #Get All Rick and Morty Characters from the Rick and Morty Character API
     dataframes = []
     url = 'https://rickandmortyapi.com/api/character'
     
@@ -20,5 +21,22 @@ def get_all_rick_and_morty_characters() -> None:
         url = data['info']['next']
     df = pd.concat(dataframes)
 
-    #dont' have access to a database to write to, so just pretend this print does that
+    return df
+
+
+@task()
+def count_by_species(df):
+    #Count the number of characters by species
+    result = df.groupby('species').size()
+    return result
+
+@task(log_prints=True)
+def log_results(df):
+    #Print the results in logs
     print(df)
+
+@flow()
+def run_rick_and_morty():
+    characters = get_all_rick_and_morty_characters()
+    result = count_by_species(characters)
+    log_results(result)
